@@ -4,7 +4,7 @@
 # @description      A user-based collaborative filtering algorithm
 ###############################################################################
 
-from math import sqrt
+import math
 import numpy
 import gzip
 import pprint
@@ -110,7 +110,7 @@ def pearson_correlation(ratings_1, ratings_2):
             summation_xy += x*y # the sum of the product Xi*Yi, from i to n
             summation_power_x += pow(x, 2) # the sum of Xi^2, from i to n
             summation_power_y += pow(y, 2) # the sum of Yi^2, from i to n
-    denominator = sqrt(summation_power_x - (pow(summation_x, 2) / n)) * sqrt(summation_power_y - (pow(summation_y, 2) / n))
+    denominator = math.sqrt(summation_power_x - (pow(summation_x, 2) / n)) * math.sqrt(summation_power_y - (pow(summation_y, 2) / n))
 
     if (denominator == 0):
         return 0
@@ -153,7 +153,7 @@ def cosine_similarity(ratings_1, ratings_2):
                 summation_power_x += pow(x, 2)
                 summation_power_y += pow(y, 2)
 
-    denominator = sqrt(summation_power_x) * sqrt(summation_power_y)
+    denominator = math.sqrt(summation_power_x) * math.sqrt(summation_power_y)
 
     if (denominator == 0):
         return 0
@@ -176,8 +176,8 @@ def adjusted_cosine_similarity(ratings_1, ratings_2):
     intersection_size = 0
     summation_xy = summation_power_x = summation_power_y = 0
 
-    mean_x = numpy.mean(ratings_1.values())
-    mean_y = numpy.mean(ratings_2.values())
+    mean_x = numpy.mean(ratings_1.values()) # mean value of ratings vector x
+    mean_y = numpy.mean(ratings_2.values()) # mean value of ratings vector y
 
     for key in ratings_1:
         x = ratings_1[key] # rating by x for a particular item
@@ -202,7 +202,7 @@ def adjusted_cosine_similarity(ratings_1, ratings_2):
                 summation_power_x += pow(x, 2)
                 summation_power_y += pow(y-mean_y, 2)
 
-    denominator = sqrt(summation_power_x) * sqrt(summation_power_y)
+    denominator = math.sqrt(summation_power_x) * math.sqrt(summation_power_y)
 
     if (denominator == 0):
         return 0
