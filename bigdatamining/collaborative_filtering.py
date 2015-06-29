@@ -4,10 +4,12 @@
 # @description      A user-based collaborative filtering algorithm
 ###############################################################################
 
+import sys
 import math
 import numpy
 import gzip
 import pprint
+import time
 
 
 class NestedDict(dict):
@@ -269,7 +271,7 @@ def recommend(user, users_data, k, n):
                 if item not in recommendations:
                     recommendations[item] = neighbor_ratings[item] * weight
                 else:
-                    recommendations[item] = recommendations[item] + neighbor_ratings[item] * weight
+                    recommendations[item] += neighbor_ratings[item] * weight
 
     recommendations = list(recommendations.items()) # make list from dict
     recommendations.sort(key=lambda itemTuple: itemTuple[1], reverse=True)
@@ -277,6 +279,25 @@ def recommend(user, users_data, k, n):
     return recommendations[:n] # only get the first n items
 
 
+
+# Start the execution timer
+start_time = time.time()
+
+# Check the input correctness
+if len(sys.argv) != 4:
+    print "\n"
+    print '*' * 80
+    print "Usage: python %s [user id] [k] [n]\n" % sys.argv[0]
+    print "\tuser id\t\tthe (uppercase) alphanumeric user ID"
+    print "\tk\t\tthe number of nearest neighbors to take into account"
+    print "\tn\t\tthe maximum number of recommendations to make"
+    print '*' * 80
+    print "\n"
+    sys.exit(1)
+
+user_id = sys.argv[1] # the user ID
+k = int(sys.argv[2]) # the number of nearest neighbors to take into account
+n = int(sys.argv[3]) # the maximum number of recommendations to make
 
 users_data = NestedDict() # create a new nested dictionary
 
@@ -288,13 +309,30 @@ for review in parse_dataset("../data/reviews_clothing_150k.json.gz"):
     vote = review['overall']
     users_data[user][product] = vote
 
-# CONSOLE OUTPUT
-# pprint.pprint(users_data)
-
 # FILE OUTPUT
 # with open("../tests/output_clothing.txt", "w") as f:
     # f.write(pprint.pformat(users_data))
 
-# Recommend a set of object to a given user
-print recommend("A2KBV88FL48CFS", users_data, 3, 10) # testing for clothes
-# print recommend("A3D6OI36USYOU1", users_data) # testing for grocery
+# Recommend a set of objects to a given user
+print "\n"
+print '*' * 80
+print "Input data to compute:\n"
+print "\tuser id\t\t%s" % user_id
+print "\tk\t\t%d (nearest neighbors to take into account)" % k
+print "\tn\t\t%s (maximum number of recommendations to make)" % n
+print '*' * 80
+print "\n"
+print '*' * 80
+print "List of recommendations in descending order:\n"
+
+recommendations = recommend(user_id, users_data, k, n) # testing for clothes
+# print recommend("A2KBV88FL48CFS", users_data, 3, 10) # for static testing
+
+# Print the results
+print "\n".join(str(r) for r in recommendations)
+print '*' * 80
+print "\n"
+
+# Print the execution time
+print("--- Execution time: %s seconds ---" % (time.time() - start_time))
+print "\n"
