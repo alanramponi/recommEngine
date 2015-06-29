@@ -229,70 +229,60 @@ def nearest_neighbor(user, users_data):
             distances.append((u, distance))
 
     distances.sort(key=lambda itemTuple: itemTuple[1], reverse=True)
-    # print distances[:10]
 
     return distances
 
 
-def recommend(user, users_data):
+def recommend(user, users_data, k, n):
     """Gives a list of recommendations based on similar ratings.
 
     Args:
         user: the reviewerID of the user that we want to recommend items to
         users_data: the complete datastore of ratings
+        k: the number of nearest neighbors to take into account
+        n: the maximum number of recommendations to make
 
     Return:
         A sorted list of recommendations based on similar ratings of K-NN
     """
-    k = 3
-    # n = 5 # the maximum number of recommendations to make
     total_distance = 0.0
     recommendations = {}
 
-    # the ID of the nearest user
-    nearest = nearest_neighbor(user, users_data) # A0004478EF5NFPHLGCWG
-
-    # a list of (item, rating) pairs given by the input user
-    user_ratings = users_data[user] # {'B0001BGTSA': 5.0, 'B0001BGTV2': 5.0}
+    nearest = nearest_neighbor(user, users_data) # nearest user (reviewerID)
+    user_ratings = users_data[user] # (item, rating) given by the input user
 
     for i in range(k):
-        total_distance += nearest[i][1]
-        # print total_distance
+        total_distance += nearest[i][1] # sum of k-NN distances
 
-    # Iterate through the k nearest neighbors accumulating their ratings
-    for i in range(k):
-        # compute slice of pie
-        weight = nearest[i][1] / total_distance # TODO(Alan): divisione per 0
-        name = nearest[i][0] # name of the user
-        neighbor_ratings = users_data[name] # ratings for this user
+    for i in range(k): # accumulates all the k-NN ratings
+        try:
+            weight = nearest[i][1] / total_distance # neighbor's relative w.
+        except ZeroDivisionError:
+            print "ERROR! Cannot divide by zero."
 
-        # Find items neighbor rated that user didn't
+        name = nearest[i][0] # name of the neighbor
+        neighbor_ratings = users_data[name] # ratings for that neighbor
+
+        # find (and store) items that user didn't rate
         for item in neighbor_ratings:
             if not item in user_ratings:
                 if item not in recommendations:
-                    recommendations[item] = neighbor_ratings[item] * \
-                                        weight
+                    recommendations[item] = neighbor_ratings[item] * weight
                 else:
-                    recommendations[item] = recommendations[item] + \
-                                        neighbor_ratings[item] * \
-                                        weight
+                    recommendations[item] = recommendations[item] + neighbor_ratings[item] * weight
 
-    # Make list from dictionary (TODO(Alan): and only get the first n items)
-    recommendations = list(recommendations.items())
-    # recommendations = list(recommendations.items())[n]
-
+    recommendations = list(recommendations.items()) # make list from dict
     recommendations.sort(key=lambda itemTuple: itemTuple[1], reverse=True)
-    return recommendations
+
+    return recommendations[:n] # only get the first n items
 
 
 
 users_data = NestedDict() # create a new nested dictionary
 
 # Parse the dataset and populate the nested dictionary
-#for review in parse_dataset("../RESOURCES/BIG-DATA_Datasets/reviews_Grocery_and_Gourmet_Food.json.gz"):
-
 for review in parse_dataset("../data/reviews_clothing_150k.json.gz"):
-    # for review in parse_dataset("../data/reviews_grocery_50k.json.gz"):
+# for review in parse_dataset("../data/reviews_grocery_50k.json.gz"):
     user = review['reviewerID']
     product = review['asin']
     vote = review['overall']
@@ -306,5 +296,5 @@ for review in parse_dataset("../data/reviews_clothing_150k.json.gz"):
     # f.write(pprint.pformat(users_data))
 
 # Recommend a set of object to a given user
-print recommend("A2KBV88FL48CFS", users_data) # testing for clothes
+print recommend("A2KBV88FL48CFS", users_data, 3, 10) # testing for clothes
 # print recommend("A3D6OI36USYOU1", users_data) # testing for grocery
