@@ -1,0 +1,6 @@
+# Ignore all MAC temp files
+*.DS_Store
+
+# Ignore all re-compiled python files (.pyn)
+/bigdatamining/clustering/*.pyn
+/bigdatamining/text_based/*.pyn
