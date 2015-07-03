@@ -1,0 +1,87 @@
+######################################################################
+
+	Init Phase
+
+######################################################################
+
+//only the first time to load data into hadoop fs
+hadoop fs -mkdir tfidf_v1
+hadoop fs -mkdir tfidf_v1/wordcount
+hadoop fs -mkdir tfidf_v1/wordcount/input
+hadoop fs -mkdir tfidf_v1/wordindoc
+hadoop fs -mkdir tfidf_v1/tfidf
+
+chmod +x wordcount_map.py
+chmod +x wordcount_red.py
+hadoop fs -put ~/workspace/line_count_test/1000_reviews.json  tfidf_v1/wordcount/input
+hadoop fs -put ~/workspace/line_count_test/small.json  tfidf_v1/wordcount/input
+
+
+######################################################################
+
+	WordCount Phase
+
+######################################################################
+
+hadoop fs -rm -r tfidf_v1/wordcount/output1
+
+// for testing purporse 
+cat ~/workspace/line_count_test/small.json | ./wordcount_map.py | sort | ./wordcount_red.py
+
+//run
+hadoop jar /usr/lib/hadoop-0.20-mapreduce/contrib/streaming/hadoop-streaming-2.6.0-mr1-cdh5.4.0.jar     -mapper wordcount_map.py     -reducer wordcount_red.py     -input tfidf_v1/wordcount/input/small.json     -output tfidf_v1/wordcount/output1  -file wordcount_map.py -file wordcount_red.py
+
+//look at result
+hadoop fs -text tfidf_v1/wordcount/output1/part-*
+
+######################################################################
+
+	TF Phase  
+
+######################################################################
+hadoop fs -rm -r tfidf_v1/wordindoc/output1
+
+// for testing purporse
+hadoop fs -text tfidf_v1/wordcount/output1/part-* | ./wordindoc_map.py | sort | ./wordindoc_red.py
+
+// run
+hadoop jar /usr/lib/hadoop-0.20-mapreduce/contrib/streaming/hadoop-streaming-2.6.0-mr1-cdh5.4.0.jar     -mapper wordindoc_map.py     -reducer wordindoc_red.py     -input tfidf_v1/wordcount/output1     -output tfidf_v1/wordindoc/output1  -file wordindoc_map.py -file wordindoc_red.py
+
+// look at result
+hadoop fs -text tfidf_v1/wordindoc/output1/part-*
+
+######################################################################
+
+	CountItem Phase
+
+######################################################################
+// I need the total number of the items for the next phase so run a simple mapreduce to count items
+
+hadoop fs -rm -r tfidf_v1/item_number
+
+//run
+hadoop jar /usr/lib/hadoop-0.20-mapreduce/contrib/streaming/hadoop-streaming-2.6.0-mr1-cdh5.4.0.jar     -Dmapred.reduce.tasks=1     -input tfidf_v1/wordcount/input/small.json     -output tfidf_v1/item_number     -mapper cat     -reducer "wc -l"
+
+// look at result
+hadoop fs -text tfidf_v1/item_number/part-*
+
+######################################################################
+
+	TFIDF Phase
+
+######################################################################
+hadoop fs -rm -r tfidf_v1/tfidf/output1
+
+// run
+hadoop jar /usr/lib/hadoop-0.20-mapreduce/contrib/streaming/hadoop-streaming-2.6.0-mr1-cdh5.4.0.jar     -mapper idf_map.py     -reducer idf_red.py     -input tfidf_v1/wordindoc/output1     -output tfidf_v1/tfidf/output1  -file idf_map.py -file idf_red.py -cmdenv TOT_LINE=<number of line that we get fom previous phase>
+
+// look at result
+hadoop fs -text tfidf_v1/tfidf/output1/part-*
+
+######################################################################
+
+	If we look to the results we have word@asin tfidf_value
+
+
+
+
