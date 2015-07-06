@@ -67,11 +67,12 @@ Description description description
 
 ####* [usage]:
 
-```python script.py [param1] [param2] [paramN]```, where:
+```python main.py [threshold] [text]```, where:
 
-* **param1**: description
-* **param2**: description
-* **paramN**: description
+* **threshold**: the (optional) IDF threshold used to compute the TF-IDF
+* **text**: a possible search text to use
+
+*if you want to input a product ID to get suggestions, insert only the threshold
 
 ####* [sample output]:
 
