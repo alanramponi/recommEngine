@@ -9,7 +9,8 @@ hadoop fs -mkdir tfidf_v1
 hadoop fs -mkdir tfidf_v1/wordcount
 hadoop fs -mkdir tfidf_v1/wordcount/input
 hadoop fs -mkdir tfidf_v1/wordindoc
-hadoop fs -mkdir tfidf_v1/tfidf
+hadoop fs -mkdir tfidf_v1/word_tfidf
+hadoop fs -mkdir tfidf_v1/item_tfidf
 
 chmod +x wordcount_map.py
 chmod +x wordcount_red.py
@@ -70,18 +71,28 @@ hadoop fs -text tfidf_v1/item_number/part-*
 	TFIDF Phase
 
 ######################################################################
-hadoop fs -rm -r tfidf_v1/tfidf/output1
+hadoop fs -rm -r tfidf_v1/word_tfidf/output1
 
 // run
-hadoop jar /usr/lib/hadoop-0.20-mapreduce/contrib/streaming/hadoop-streaming-2.6.0-mr1-cdh5.4.0.jar     -mapper idf_map.py     -reducer idf_red.py     -input tfidf_v1/wordindoc/output1     -output tfidf_v1/tfidf/output1  -file idf_map.py -file idf_red.py -cmdenv TOT_LINE=<number of line that we get fom previous phase>
+hadoop jar /usr/lib/hadoop-0.20-mapreduce/contrib/streaming/hadoop-streaming-2.6.0-mr1-cdh5.4.0.jar     -mapper idf_map.py     -reducer idf_red.py     -input tfidf_v1/wordindoc/output1     -output tfidf_v1/word_tfidf/output1  -file idf_map.py -file idf_red.py -cmdenv TOT_LINE=<number of line that we get fom previous phase>
 
 // look at result
-hadoop fs -text tfidf_v1/tfidf/output1/part-*
+hadoop fs -text tfidf_v1/word_tfidf/output1/part-*
 
 ######################################################################
 
-	If we look to the results we have word@asin tfidf_value
+	TFIDF DOc based Phase
 
+######################################################################
+hadoop fs -rm -r tfidf_v1/item_tfidf/output1
 
+// for testing purporse
+hadoop fs -text tfidf_v1/word_tfidf/output1/part-* | ./tfidf_map.py  | sort | ./tfidf_red.py
+
+// run
+hadoop jar /usr/lib/hadoop-0.20-mapreduce/contrib/streaming/hadoop-streaming-2.6.0-mr1-cdh5.4.0.jar     -mapper tfidf_map.py     -reducer tfidf_red.py     -input tfidf_v1/word_tfidf/output1     -output tfidf_v1/item_tfidf/output1  -file tfidf_map.py -file tfidf_red.py
+
+// look at result
+hadoop fs -text tfidf_v1/item_tfidf/output1/part-*
 
 
