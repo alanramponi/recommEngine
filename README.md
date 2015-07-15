@@ -1,85 +1,21 @@
-# bigdataminingproject
-Repo for both the BIG DATA and DATA MINING projects.
+## Recommendation system implementation based on clustering, text similarity and collaborative filtering
+
+##### BIG DATA and DATA MINING projects by Alan Ramponi (151369) and Davide Martintoni (171076).
+
+--
 
 ### Project structure
 
-- **[project-name*]**: contains all the script files
-  - **backup**: contains older versions of the scripts
-- **data**: useful datasets for testing purpouse
-- **tests**: output test files for all the algorithms implemented
-- **res**: useful resources such as the road map and other stuff
-
-*to be decided
-
---
-
-### Algorithm 1: User-based collaborative filtering
-
-Description description description
-
-####* [usage]:
-
-```python collaborative_filtering.py [user id] [k] [n]```, where:
-
-* **user id**: the (uppercase) alphanumeric user ID
-* **k**: the number of nearest neighbors to take into account
-* **n**: the maximum number of recommendations to make
-
-####* [sample output]:
-
-```
-List of recommendations in descending order:
-
-('B0000ZFHJY', 1.6783058754304387)
-('B00079UM2A', 1.6783058754304387)
-('B0000867GG', 1.3803117380153767)
-```
+- **bigdatamining/**: contains all the whole project code
+  - **clustering**: contains all the scripts to compute the clustering algorithms
+  - **collaborative_filtering**: contains all the scripts to compute the collaborative filtering algorithms
+  - **text_based**: contains all the scripts to compute the text based algorithms
+  - **map_reduce_tfidf**: contains all the scripts for the parallel MapReduce version of the text based algorithm
+- **data/**: contains useful datasets for testing purpouses
+  - **k-fold**: contains all the parsed training and test sets text files, for each experiment k
+- **test/**: output some obtained testing stuff
+  - **k-fold_evaluation**: contains older versions of the scripts
+    - **output_files**: contains all the results obtained from the experiments 1, 2, 3, 4 and 5
+    - **plots**: contains all the plots obtained from the experiments 1, 2, 3, 4 and 5
 
 --
-
-### Algorithm 2: Hierarchical clustering for detecting community structures
-
-Description description description
-
-####* [usage]:
-
-```python script.py [param1] [param2] [paramN]```, where:
-
-* **param1**: description
-* **param2**: description
-* **paramN**: description
-
-####* [sample output]:
-
-```
-List of recommendations in descending order:
-
-('B0000ZFHJY', 1.6783058754304387)
-('B00079UM2A', 1.6783058754304387)
-('B0000867GG', 1.3803117380153767)
-```
-
---
-
-### Algorithm 3: Dimensionality reduction by stemming, tokenization, TF-IDF
-
-Description description description
-
-####* [usage]:
-
-```python main.py [threshold] [text]```, where:
-
-* **threshold**: the (optional) IDF threshold used to compute the TF-IDF
-* **text**: a possible search text to use
-
-*if you want to input a product ID to get suggestions, insert only the threshold
-
-####* [sample output]:
-
-```
-List of recommendations in descending order:
-
-('B0000ZFHJY', 1.6783058754304387)
-('B00079UM2A', 1.6783058754304387)
-('B0000867GG', 1.3803117380153767)
-```
