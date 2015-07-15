@@ -88,7 +88,11 @@ def pearson_correlation(ratings_1, ratings_2):
             summation_xy += x*y # the sum of the product Xi*Yi, from i to n
             summation_power_x += pow(x, 2) # the sum of Xi^2, from i to n
             summation_power_y += pow(y, 2) # the sum of Yi^2, from i to n
-    denominator = math.sqrt(summation_power_x - (pow(summation_x, 2) / n)) * math.sqrt(summation_power_y - (pow(summation_y, 2) / n))
+
+    if n != 0:
+        denominator = math.sqrt(summation_power_x - (pow(summation_x, 2) / n)) * math.sqrt(summation_power_y - (pow(summation_y, 2) / n))
+    else:
+        return 0
 
     if (denominator == 0):
         return 0
