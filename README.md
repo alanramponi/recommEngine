@@ -1,6 +1,6 @@
 ## Recommendation system implementation based on clustering, text similarity and collaborative filtering
 
-##### BIG DATA and DATA MINING projects by Alan Ramponi (151369) and Davide Martintoni (171076).
+###### BIG DATA and DATA MINING projects by Alan Ramponi (151369) and Davide Martintoni (171076).
 
 --
 
@@ -10,7 +10,7 @@
   - **clustering**: contains all the scripts to compute the clustering algorithms
   - **collaborative_filtering**: contains all the scripts to compute the collaborative filtering algorithms
   - **text_based**: contains all the scripts to compute the text based algorithms
-  - **map_reduce_tfidf**: contains all the scripts for the parallel MapReduce version of the text based algorithm
+  - **map_reduce_tfidf**: contains all the scripts to compute the parallel MapReduce version of the text based algorithm
 - **data/**: contains useful datasets for testing purpouses
   - **k-fold**: contains all the parsed training and test sets text files, for each experiment k
 - **test/**: output some obtained testing stuff
