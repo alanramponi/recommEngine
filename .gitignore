@@ -3,4 +3,6 @@
 
 # Ignore all re-compiled python files (.pyn)
 /bigdatamining/clustering/*.pyn
+/bigdatamining/collaborative_filtering/*.pyn
+/bigdatamining/map_reduce_tfidf/*.pyn
 /bigdatamining/text_based/*.pyn
